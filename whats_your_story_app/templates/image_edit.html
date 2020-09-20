@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Story</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class="container bg-secondary text-info">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold text-info" href="#">What's Your Story</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto"></ul>
+                <span class="navbar-text h5">
+                    Welcome, {{request.session.user}} ! <a href="/profile" role="button" class="ml-auto text-info">My Profile </a>|<a href="/stories/create"role="button" class="ml-auto text-info">Create Story </a> |<a class="ml-auto text-info" href="/all_stories">StoryBoard</a> |  <a href="/stories/logout" role="button" class="ml-auto text-info">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class ="col">
+        <div class="row justify-content-md-center">
+            <div class= "d-block bg-light mt-5 mb-5 mx-3 pt-5 pb-5 px-3">
+            <!-- #UPLOAD IMAGES FORM  -->
+                <h4 class ="mb-5">Upload an Image </h4>
+                <form method="POST" action="{{ 'upload' }}" enctype="multipart/form-data" autocomplete="off"> 
+                    {% csrf_token %}
+
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %} 
+                <h5>Select an Image</h5>
+                    <input type="file" name="story_pic" >
+                    <br><br><br>
+                    <div class="form-group">
+                        <label for="story_cap"><b><b>Caption</b></label>
+
+                        <input type="text" class="form-control" placeholder ="Caption this." name="story_cap">
+
+                    </div>
+                    <button type="submit">Upload file</button>
+                </form>
+                {% if url %}
+                    <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
+                {% endif %}
+            </div> 
+        </div>
+    <!-- #EDIT IMAGES & CAPTIONS -->
+
+    <!-- GIVING USERS OPTION TO ADD & REMOVE IMAGES -->
+        <div class ="row justify-content-lg-center">
+            <div class = "d-block mt-5 mb-5 mx-3 px-3">
+
+                <form action="/stories/{{story.id}}/image_upload" method="POST" enctype="multipart/form-data" autocomplete="off"> 
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        {% for story_image in story.story_images.all %}
+                            <label for="story_cap"><b>Story Image</b></label>
+                            <br>
+                            
+                            <img class ="img-fluid align-self-center" height ="200px" width ="200px" src="{{story_image.story_pic}}" alt="Responsive image">
+                            <br>
+                            <!-- <input type="file" class="form-contol" name="story_pic">
+                            {% if url %}
+                                <p>Uploaded file: <a href="{{ url }}">{{ url }}</a></p>
+                            {% endif %} -->
+                            <br>
+                            <a href="/delete/image/{{story.id}}/{{story_image.id}}" class="ml-auto text-info" role="button">Remove Image From Story</a>
+                            <br><br>
+                            <div class="form-group">
+                                <label for="story_cap"><b>Image Caption</b></label> 
+                                <input type="text" class="form-control" value="{{story_image.story_cap}}" name="story_cap">
+                            </div>
+                            <button class="btn btn-info btn-inline-block mt-2 mb-2">Submit</button>
+                            <br><br>
+                            <hr>
+                            <br><br>
+                        {% endfor %}
+                    </div>                   
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

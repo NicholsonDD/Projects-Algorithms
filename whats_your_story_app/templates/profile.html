@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Show Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class="container bg-secondary text-info">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold text-info" href="#">What's Your Story?</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto"></ul>
+                <span class="navbar-text h5">
+                    Welcome, {{request.session.user}} ! <a href="/stories/create"role="button" class="ml-auto text-info">Create Story </a> |<a class="ml-auto text-info" href="/all_stories">StoryBoard</a> |  <a href="/stories/logout" role="button" class="ml-auto text-info">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 d-block" >
+            <div class="d-block bg-light mt-5 mb-5 mx-3 pt-5 pb-5 px-3">
+                <h2 class="text-uppercase text-center mt-3 mb-5 ">My Profile</h2>
+                <p ><b> First Name:</b> {{user.first_name}}</p>
+                <p ><b> Last Name:</b> {{user.last_name}}</p>
+                <p ><b> Email:</b> {{user.email}}</p>
+                <p><b> Birthdate:</b> {{user.birthdate}}</p>
+                <!-- <p>Password: {{user.uploaded_by.password}}</p> -->
+                <p><b> Created on:</b> {{user.created_at}}</p>
+                <p><b> Last updated on:</b> {{user.updated_at}}</p>
+                    
+            </div>
+        </div>
+        <div class="col d-block justify-content-center">
+            <h3 class="text-center text-white">My Stories</h3>
+            <table class="table table-bordered mt-5 border border-dark">
+                <thead>
+                    <tr class="table-info">
+                        <th>Story Title</th>
+                        <th>Created On</th>
+                        <th>Updated On</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for story in user.stories_created.all %}
+                    <tr class="{% cycle 'table-light' 'table-info' %}">
+                        <td><a href="/stories/{{story.id}}/edit">{{story.story_title}}</a></td>
+                        <td>{{story.created_at}}</td>
+                        <td>{{story.updated_at}}</td>
+                        <td><a href="/stories/{{story.id}}/edit">Edit</a> | <a href="/stories/{{story.id}}/delete">Delete</a></td>
+
+                    {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!-- #EDIT FOR PROFILE -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Trip</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class='container text-info bg-secondary'>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold text-info" href="#">What's Your Story?</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto"></ul>
+                <span class="navbar-text h5">
+                    Welcome, {{request.session.user}} ! <a href="/profile" role="button" class="ml-auto text-info">My Profile </a>|<a href="/stories/create"role="button" class="ml-auto text-info">Create Story </a> |<a class="ml-auto text-info" href="/all_stories">StoryBoard</a> |  <a href="/stories/logout" role="button" class="ml-auto text-info">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="row"> 
+        <div class="col mb-5">
+            <div class="d-inline-block mt-5 px-4 pb-5 pt-3 rounded bg-white"> 
+
+
+                <!-- #VIEW STORY -->
+                <form method="POST" action="{{ 'story' }}" enctype="multipart/form-data" autocomplete="off"> 
+                    <!-- #DISPLAY STORY & AUTHOR DETAILS -->
+
+                    <h3 class="text-center text-info pt-3 mb-5">View Story</h3>
+                    <p><b>Story Title:</b> {{story.story_title}}</p>
+                    <p><b>By:</b> {{story.published_by.first_name}} {{story.published_by.last_name}}</p>
+                    <p><b>Story:</b> {{story.desc}}</p>
+                    <p><b>Published on:</b> {{story.published_by.created_at}}</p>
+                    <p><b>Last updated on:</b> {{story.published_by.updated_at}}</p>
+                    <!-- <a class="btn btn-info btn-inline" href="/stories/{{story.id}}/edit" role="button">Edit</a> -->
+                    <a class="btn btn-info mb-2 btn-inline" href="/stories/{{story.id}}/delete" role="button">Delete</a>
+                </form>
+                <a class="btn btn-info btn-inline-block" href="/stories/{{story.id}}/upload" role="button">Upload Images</a>
+            </div>
+        </div>
+
+
+<!-- #EDIT STORY                     -->
+        <div class="col mb-5">
+            <div class="d-inline-block mt-5 px-4 pb-5 pt-3 rounded bg-white"> 
+                <form action="/stories/{{story.id}}/edit" method="POST" enctype="multipart/form-data" autocomplete="off"> 
+                    {% csrf_token %}
+                    
+                    <h3 class="text-center text-info pt-3 mb-5">Edit Story</h2>
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    
+                    <div class="form-group">
+                        <label for="story_title"><b>Story Title</b></label> 
+                        <input type="text" class="form-control" value="{{story.story_title}}" name="story_title">
+                    </div>
+                    <br>
+                    <div class="form-group ">
+                        <label for="desc"><b>Tell Me the Details!!</b></label>
+                        <textarea class="form-controlmb-3 " value="{{story.desc}}" name="desc" id="desc" cols="50"rows="5">{{story.desc}}</textarea>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="updated_at"><b>Updated On</b></label> 
+                        <input type="date" class="form-controlmb-3" value="{{story.updated_at}}" name="updated_on">
+                    </div>
+                    <br>
+
+                    <button class="btn btn-info btn-block mb-2">Submit</button>
+                    
+                    <a class="btn btn-info btn-inline-block" href="/stories/{{story.id}}/upload" role="button">Edit Images</a>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

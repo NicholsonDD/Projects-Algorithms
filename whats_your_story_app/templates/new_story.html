@@ -1,0 +1,53 @@
+<!-- #NEW STORY -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Story</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class="container bg-secondary text-info">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand font-weight-bold text-info" href="#">What's Your Story</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav mr-auto"></ul>
+                <span class="navbar-text h5">
+                    Welcome, {{request.session.user}} ! <a href="/profile" role="button" class="ml-auto text-info">My Profile </a> | <a class="ml-auto text-info" href="/all_stories">StoryBoard</a> |  <a href="/stories/logout" role="button" class="ml-auto text-info">Logout</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+    <div class="row justify-content-center">
+        <div class="col-md-8 ">
+            <div class="d-block mt-5 px-5 pb-5 pt-3 rounded bg-white">    
+                <!-- MODULARIZE INTO TWO FORMS;
+                Form 1) Create a Story
+                    -- This allows for story creation without any images
+                Form 2) (could even be on seperate page) Image Upload
+                    -- Isolating image upload -->
+
+                <h3 class="text-center text-info pt-3 mb-5">Create New Story</h3>
+                <form action="{{'create'}}" method='POST' autocomplete="off">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="story_title"><b>Story Title</b></label> 
+                        <input type="text" class="form-control" placeholder ="What will you call your story?" name="story_title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="desc"><b>My Story</b></label>
+                        <textarea class=form-control placeholder ="Tell me all the details!!" name="desc" id="desc" cols="50"rows="5"></textarea>
+                    </div>
+                    <button type ='submit' class="btn btn-info btn-block mb-2" >Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>                                  

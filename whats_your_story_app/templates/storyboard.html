@@ -1,0 +1,128 @@
+<!-- #STORYBOARD/ STORYWALL -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's Your Story?</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<!-- #NEEDS BOOTSTRAP HELP -->
+
+<body>
+    <div>
+        <body class="container bg-secondary text-info">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container">
+                    <a class="navbar-brand font-weight-bold text-info" href="#">What's Your Story?</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText"
+                        aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarText">
+                        <ul class="navbar-nav mr-auto"></ul>
+                        <span class="navbar-text h5">
+                            Welcome, {{request.session.user}} !  <a href="/profile" role="button" class="ml-auto text-info">My Profile </a>|<a href="/stories/create"role="button" class="ml-auto text-info">Create Story </a> |  <a href="/stories/logout" role="button" class="ml-auto text-info">Logout</a>
+                        </span>
+                    </div>
+                </div>
+            </nav>
+            <div class="border border-dark bg-light px-5 pb-5 pt-2 m-5">
+                <!-- <div class="row"> -->
+                <div class="row">
+                    <div class="col mb-5">
+                        <h1 class= " text-center mb-5 mt-5">Storyboard</h1>
+                        {% for story in all_stories %}
+                            <div class="row d-block mt-5">
+                                <hr>        
+                                {% if this_user.id != story.published_by.id %}
+                                    <h3 class = "text-center mb-3">{{story.story_title}}</h3>
+                                {% endif %} 
+                                {% if this_user.id == story.published_by.id %}
+                                    <h2 class = "text-center mb-3"><a href="/stories/{{story.id}}/story">{{story.story_title}}</a></h3>
+                                {% endif %}
+
+                                <p class="text-center mt-3 mb-5" ><b>By:</b>  {{story.published_by.first_name}} 
+                                {{story.published_by.last_name}}</p>
+
+                            <!-- #DISPLAY STORY IMAGES WITH CAPTIONS -->
+                                <div class = "row d-block mt-3" >
+                                    <div class ="col">
+                                        {% for story_pic in story.story_images.all %}
+                                            <!-- then show those images and their captions -->
+                                            <div class="thumbnail d-inline-block mx-3">
+                                                <img src="{{story_pic.story_pic}} " class = "img-fluid"  height="100" width="100" alt="{{story_pic.story_cap}}">
+                                                <div class="caption text-align-center  px-2 pt-2 pb-2">
+                                                    <p> {{story_pic.story_cap}}</p>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>                                    
+                                </div>
+                            </div>
+                            <div class ="row d-block">
+                                <br><br>
+                                <p class="ml-2">{{story.desc}}</p>
+                                {% if this_user == story.published_by.id %}
+                                    <a class="btn btn-sm  d-inline-block btn-info mb-4 mt-3 ml-2 text-white" href="/stories/{{story.id}}/edit" role="button">Edit</a>
+                                    <a class="btn btn-sm  d-inline-block btn-info mb-4 mt-3 ml-2 text-white" href="/stories/{{story.id}}/delete" role="button">Delete</a>
+                                {% endif %}
+                                <br><br>
+
+
+                                <p><b>Published on:</b> {{story.published_by.created_at}}</p>
+                                <p><b>Last updated on:</b> {{story.published_by.updated_at}}</p>
+
+                                <br><br>
+
+                                <!-- #STORY LIKES -->
+                                {% if story.users_who_like.count > 0 %}
+                                    
+                                    <P><b>Story Likes</b> {{story.users_who_like.count}}</p>
+                                    {% if this_user in story.users_who_like.all and this_user != story.published_by %}
+                                        <a href="/stories/{{story.id}}/unlike_story" role="button" class="btn btn-sm btn-danger ml-2 text-white">Unlike</a>
+                                        
+                                    {% elif this_user not in story.users_who_like.all and this_user != story.published_by %}
+                                        <a href="/stories/{{story.id}}/like_story" role="button" class="btn btn-sm btn-info ml-2 text-white">Like</a>
+                                        
+                                    {% endif %} 
+
+                                {% endif %}
+                                <br>
+                                <hr>
+                                
+                                
+                                <!-- #COMMENTS -->
+                                <div class="row d-block mt-5 ml-3">
+                                    <h5>Post a Comment</h5>
+                                    <form action="stories/{{story.id}}/post_comment" method="POST">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="story_id" value="{{story.id}}">
+                                        <textarea class="form-control sm w-50" name="comment" id="comment" cols="50"rows="5"></textarea>
+                                        <button type="submit" class="btn btn-sm btn-info mt-3 ml-2 text-white">Comment</button>
+                                    </form>
+                                </div>
+                                <div class="row d-block ml-3 mt-5">
+                                    {% for comment in story.has_comments.all %}
+                                        <p class = "ml-3 mt-2 pt-3 pb-3">&mdash; {{comment.commenter.first_name}} says:</p>
+                                        <p class = "ml-5"> Posted on: {{comment.created_at}}</p>
+                                        <p class = "ml-5 mt-2 pt-3 pb-3">{{comment.comment}}</p>
+                                        
+
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <br><br><br>
+                            <!-- #REPLACE WITH CARD VIEW -->
+                            <hr>
+                            <br><br> 
+                        {% endfor %} 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
